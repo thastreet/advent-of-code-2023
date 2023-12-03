@@ -1,6 +1,6 @@
 import java.io.File
 
-val digits = mapOf(
+private val digits = mapOf(
     "one" to "1",
     "two" to "2",
     "three" to "3",
