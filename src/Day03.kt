@@ -105,10 +105,7 @@ private fun part1(lines: List<String>): Int {
 
 private fun part2(lines: List<String>): Int {
     val (numbers, symbols) = parseData(lines)
-
-    val projections = numbers.map {
-        it.calculateProjections(lines)
-    }
+    val projections = numbers.map { it.calculateProjections(lines) }
 
     return symbols
         .filter { (_, symbol) -> symbol == '*' }
@@ -119,5 +116,5 @@ private fun part2(lines: List<String>): Int {
                 .takeIf { it.size == 2 }
                 ?.map { (_, number) -> number.toInt() }
         }
-        .sumOf { it.reduce { acc, s -> acc * s } }
+        .sumOf { numbersInt -> numbersInt.reduce { acc, number -> acc * number } }
 }
