@@ -30,17 +30,15 @@ private fun part1(data: Map<Int, Pair<Set<Int>, Set<Int>>>): Int = data.map { en
 
 private fun part2(data: Map<Int, Pair<Set<Int>, Set<Int>>>): Int {
     val copies: MutableMap<Int, Int> = data.entries.associate { it.key to 1 }.toMutableMap()
+
     data.map { entry ->
         val winningCount = entry.value.second.intersect(entry.value.first).size
         val numberOfCardsForCurrentEntry = copies.getValue(entry.key)
+        val cardNumbersToIncrement = entry.key + 1..entry.key + winningCount
 
-        repeat(numberOfCardsForCurrentEntry) {
-            val cardNumbersToIncrement = entry.key + 1..entry.key + winningCount
-
-            cardNumbersToIncrement.forEach { cardNumberToIncrement ->
-                if (copies.containsKey(cardNumberToIncrement)) {
-                    copies[cardNumberToIncrement] = copies.getValue(cardNumberToIncrement) + 1
-                }
+        cardNumbersToIncrement.forEach { cardNumberToIncrement ->
+            if (copies.containsKey(cardNumberToIncrement)) {
+                copies[cardNumberToIncrement] = copies.getValue(cardNumberToIncrement) + numberOfCardsForCurrentEntry
             }
         }
     }
