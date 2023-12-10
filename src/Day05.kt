@@ -1,3 +1,6 @@
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import java.io.File
 
 private fun parseRanges(text: String, name: String): List<Pair<LongRange, LongRange>> =
@@ -36,7 +39,7 @@ private fun resolveLocation(seed: Long, list: List<List<Pair<LongRange, LongRang
         getDestination(acc, pairs)
     }
 
-fun main() {
+suspend fun main() {
     val text = File("Day05Input.txt").readText()
 
     val seeds = parseSeeds(text)
@@ -66,9 +69,28 @@ fun main() {
 private fun part1(seeds: List<Long>, list: List<List<Pair<LongRange, LongRange>>>): Long =
     seeds.minOf { resolveLocation(it, list) }
 
-private fun part2(seeds: List<Long>, list: List<List<Pair<LongRange, LongRange>>>): Long =
-    seeds
+private suspend fun part2(seeds: List<Long>, list: List<List<Pair<LongRange, LongRange>>>): Long = coroutineScope {
+    var min = Long.MAX_VALUE
+
+    val ranges = seeds
         .chunked(2)
         .map { LongRange(it[0], it[0] + it[1]) }
-        .flatMap { range -> range.map { resolveLocation(it, list) } }
-        .min()
+
+    ranges
+        .mapIndexed { index, range ->
+            async {
+                println("Range $index started")
+
+                val location = range.minOf { resolveLocation(it, list) }
+
+                if (location < min) {
+                    min = location
+                }
+
+                println("Range $index ended")
+            }
+        }
+        .awaitAll()
+
+    min
+}
