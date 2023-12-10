@@ -14,6 +14,14 @@ private fun parseRanges(text: String, name: String): List<Pair<LongRange, LongRa
             LongRange(sourceRangeStart, sourceRangeStart + rangeLength) to LongRange(destinationRangeStart, destinationRangeStart + rangeLength)
         }
 
+private fun parseSeeds(text: String): List<Long> =
+    text
+        .substringAfter("seeds: ")
+        .lines()
+        .first()
+        .split(" ")
+        .map { it.toLong() }
+
 private fun getDestination(source: Long, ranges: List<Pair<LongRange, LongRange>>): Long =
     ranges
         .firstOrNull { it.first.contains(source) }
@@ -23,19 +31,15 @@ private fun getDestination(source: Long, ranges: List<Pair<LongRange, LongRange>
         }
         ?: source
 
+private fun resolveLocation(seed: Long, list: List<List<Pair<LongRange, LongRange>>>): Long =
+    list.fold(seed) { acc, pairs ->
+        getDestination(acc, pairs)
+    }
+
 fun main() {
     val text = File("Day05Input.txt").readText()
 
-    println("Part 1 result: ${part1(text)}")
-}
-
-private fun part1(text: String): Long {
-    val seeds = text
-        .substringAfter("seeds: ")
-        .lines()
-        .first()
-        .split(" ")
-        .map { it.toLong() }
+    val seeds = parseSeeds(text)
 
     val seedToSoil = parseRanges(text, "seed-to-soil")
     val soilToFertilizer = parseRanges(text, "soil-to-fertilizer")
@@ -55,11 +59,16 @@ private fun part1(text: String): Long {
         humidityToLocation
     )
 
-    val locations = seeds.associateWith { seed ->
-        list.fold(seed) { acc, pairs ->
-            getDestination(acc, pairs)
-        }
-    }
-
-    return locations.minOf { it.value }
+    println("Part 1 result: ${part1(seeds, list)}")
+    println("Part 2 result: ${part2(seeds, list)}")
 }
+
+private fun part1(seeds: List<Long>, list: List<List<Pair<LongRange, LongRange>>>): Long =
+    seeds.minOf { resolveLocation(it, list) }
+
+private fun part2(seeds: List<Long>, list: List<List<Pair<LongRange, LongRange>>>): Long =
+    seeds
+        .chunked(2)
+        .map { LongRange(it[0], it[0] + it[1]) }
+        .flatMap { range -> range.map { resolveLocation(it, list) } }
+        .min()
