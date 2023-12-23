@@ -1,6 +1,6 @@
 import java.io.File
 
-private enum class Card(val value: Char) {
+private enum class Card1(val value: Char) {
     AS('A'),
     KING('K'),
     QUEEN('Q'),
@@ -16,10 +16,10 @@ private enum class Card(val value: Char) {
     TWO('2');
 
     val strength: Int
-        get() = Card.entries.size - Card.entries.indexOf(this) - 1
+        get() = Card1.entries.size - Card1.entries.indexOf(this) - 1
 }
 
-private enum class Type {
+private enum class Type1 {
     FIVE_OF_A_KIND,
     FOUR_OF_A_KIND,
     FULL_HOUSE,
@@ -29,22 +29,22 @@ private enum class Type {
     HIGH_CARD
 }
 
-private data class Hand(val cards: List<Card>) : Comparable<Hand> {
+private data class Hand1(val cards: List<Card1>) : Comparable<Hand1> {
     private val groups = cards.groupBy { it.value }
 
     private val type = when {
-        groups.size == 1 -> Type.FIVE_OF_A_KIND
-        groups.any { it.value.size == 4 } -> Type.FOUR_OF_A_KIND
-        groups.any { it.value.size == 3 } && groups.any { it.value.size == 2 } -> Type.FULL_HOUSE
-        groups.any { it.value.size == 3 } -> Type.THREE_OF_A_KIND
-        groups.size == 3 -> Type.TWO_PAIR
-        groups.size == 4 -> Type.ONE_PAIR
-        else -> Type.HIGH_CARD
+        groups.size == 1 -> Type1.FIVE_OF_A_KIND
+        groups.any { it.value.size == 4 } -> Type1.FOUR_OF_A_KIND
+        groups.any { it.value.size == 3 } && groups.any { it.value.size == 2 } -> Type1.FULL_HOUSE
+        groups.any { it.value.size == 3 } -> Type1.THREE_OF_A_KIND
+        groups.size == 3 -> Type1.TWO_PAIR
+        groups.size == 4 -> Type1.ONE_PAIR
+        else -> Type1.HIGH_CARD
     }
 
-    private val strength = Type.entries.size - Type.entries.indexOf(type) - 1
+    private val strength = Type1.entries.size - Type1.entries.indexOf(type) - 1
 
-    override fun compareTo(other: Hand): Int {
+    override fun compareTo(other: Hand1): Int {
         val diff = strength - other.strength
 
         if (diff == 0) {
@@ -64,9 +64,9 @@ fun main() {
 
     val handsWithBid = lines.map { line ->
         val parts = line.split(" ")
-        val hand = Hand(
+        val hand = Hand1(
             parts[0].map { char ->
-                Card.entries.first { it.value == char }
+                Card1.entries.first { it.value == char }
             }
         )
         val bid = parts[1].toInt()
@@ -76,7 +76,7 @@ fun main() {
     println("Part 1 result: ${part1(handsWithBid)}")
 }
 
-private fun part1(handsWithBid: List<Pair<Hand, Int>>): Int =
+private fun part1(handsWithBid: List<Pair<Hand1, Int>>): Int =
     handsWithBid
         .sortedBy { it.first }
         .mapIndexed { index, pair -> (index + 1) * pair.second }
