@@ -49,7 +49,7 @@ private data class Hand2(val cards: List<Card2>) : Comparable<Hand2> {
                 .distinct()
 
             otherCards
-                .associateWith { cardToCopy ->
+                .map { cardToCopy ->
                     resolveType(
                         copy(
                             cards = cards.map {
@@ -59,8 +59,7 @@ private data class Hand2(val cards: List<Card2>) : Comparable<Hand2> {
                     )
                 }
                 .takeUnless { it.isEmpty() }
-                ?.minBy { Type2.entries.indexOf(it.value) }
-                ?.value
+                ?.minBy { Type2.entries.indexOf(it) }
                 ?: Type2.FIVE_OF_A_KIND // Every cards are Jokers
         } else {
             resolveType(this)
