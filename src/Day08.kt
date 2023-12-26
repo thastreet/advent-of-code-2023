@@ -8,14 +8,12 @@ fun main() {
         .associate { line ->
             val parts = line.split(" = ")
             val origin = parts[0]
-            val destination = parts[1]
+            val destinations = parts[1]
                 .removeSurrounding("(", ")")
                 .split(", ")
-                .let {
-                    it.first() to it.last()
-                }
+                .let { it.first() to it.last() }
 
-            origin to destination
+            origin to destinations
         }
 
     println("Part 1 result: ${part1(instructions, network)}")
