@@ -25,14 +25,15 @@ private fun part1(instructions: String, network: Map<String, Pair<String, String
     var steps = 0
     var i = 0
     var currentKey = "AAA"
-    
+
     do {
         val instruction = instructions[i]
+        val node = network.getValue(currentKey)
 
         currentKey = if (instruction == 'R') {
-            network.getValue(currentKey).second
+            node.second
         } else {
-            network.getValue(currentKey).first
+            node.first
         }
 
         ++i
