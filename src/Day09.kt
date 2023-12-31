@@ -25,6 +25,7 @@ fun main() {
     }
 
     println("Part 1 result: ${part1(sequencesWithDifferences)}")
+    println("Part 2 result: ${part2(sequencesWithDifferences)}")
 }
 
 private fun part1(sequencesWithDifferences: List<List<List<Int>>>): Int =
@@ -36,3 +37,13 @@ private fun part1(sequencesWithDifferences: List<List<List<Int>>>): Int =
             }
         }
         .sumOf { it.last() }
+
+private fun part2(sequencesWithDifferences: List<List<List<Int>>>): Int =
+    sequencesWithDifferences
+        .map { sequenceWithDifferences ->
+            sequenceWithDifferences.reduceRightIndexed { index, differences, acc ->
+                val toPrepend: Int = differences.first() - if (index == sequenceWithDifferences.lastIndex - 1) 0 else acc.first()
+                listOf(toPrepend) + differences
+            }
+        }
+        .sumOf { it.first() }
